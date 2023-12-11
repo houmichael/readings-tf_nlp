@@ -1,7 +1,6 @@
 import sys, os, re, email
 from collections import Counter
-import nltk
-from nltk.corpus import stopwords
+from Stopwords import stop_nltk, stop_cwf, stop_iso, stop_smart
 
 # Define the path to the CSV file
 emails_file_path = 'c:\\bronto1\\data\\emails.csv'
@@ -46,15 +45,12 @@ row10 = find_nth_occurrence_text(emails_str, "allen-p/", 10)
 
 # Now let's use the 10th row to explore the email
 email.message_from_string(row10.split("\",\"")[1]).get_payload()
-email_10 = email.message_from_string(row10.split("\",\"")[1])
-message_10 = email_10.get_payload()
+email10 = email.message_from_string(row10.split("\",\"")[1])
+message10 = email10.get_payload()
 
-nltk.download('stopwords')
-stopwords = stopwords.words('english')
+message10_cleaned = re.sub(" +", " ",re.sub(r"[\W\d]|--"," ", message10)).strip().lower().split(" ")
+message10_freq = sorted(dict(Counter(message10_cleaned)).items(), key=lambda x: x[1], reverse=True)
+message10_freq[:25]
 
-message_10_cleaned = re.sub(" +", " ",re.sub(r"[\W\d]|--"," ", message_10)).strip().lower().split(" ")
-
-message_10_no_stopwords = [x for x in message_10_cleaned if x not in stopwords]
-
-message_10_freq = sorted(dict(Counter(message_10_cleaned)).items(), key=lambda x: x[1], reverse=True)
-
+message10_cleaned_stop = [x for x in message10_cleaned if x not in stop_smart]
+message10_freq_stop = sorted(dict(Counter(message10_cleaned_stop)).items(), key=lambda x: x[1], reverse=True)
